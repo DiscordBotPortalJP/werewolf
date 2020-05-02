@@ -39,26 +39,6 @@ bot = commands.Bot(command_prefix='/')
 token = os.environ['DISCORD_BOT_WEREWOLF_TOKEN']
 bot.game_status = 'nothing'
 
-# ゲーム開始前：nothing
-# 参加者募集中:waiting
-# ゲーム中:playing
 
-@bot.event
-async def on_command_error(ctx, error):
-    orig_error = getattr(error, "original", error)
-    error_msg = ''.join(traceback.TracebackException.from_exception(orig_error).format())
-    await ctx.send(error_msg)
-
-
-@bot.command()
-async def create(ctx):
-    if bot.game_status == 'playing':
-        await ctx.send('ゲーム中です')
-        return
-    if bot.game_status == 'waiting':
-        await ctx.send('既に参加者募集中です')
-        return
-    bot.game_status = 'waiting'
-    await ctx.send('参加者の募集を開始しました')
-
+bot.load_extension('cogs.status')
 bot.run(token)

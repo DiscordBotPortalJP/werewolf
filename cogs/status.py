@@ -1,4 +1,3 @@
-import traceback
 from discord.ext import commands
 
 # ゲーム開始前：nothing

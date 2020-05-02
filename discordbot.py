@@ -33,10 +33,24 @@
 
 from discord.ext import commands
 import os
+import traceback
 
 bot = commands.Bot(command_prefix='/')
 token = os.environ['DISCORD_BOT_WEREWOLF_TOKEN']
 bot.game_status = 'nothing'
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CheckFailure):
+        return
+
+    if isinstance(error, commands.CommandNotFound):
+        # 要らなければ消してください
+        return
+
+    orig_error = getattr(error, "original", error)
+    error_msg = ''.join(traceback.TracebackException.from_exception(orig_error).format())
+    await ctx.send(error_msg)
 
 
 bot.load_extension('cogs.status')

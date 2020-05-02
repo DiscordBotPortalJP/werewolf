@@ -58,7 +58,7 @@ async def create(ctx):
     if bot.game_status == 'waiting':
         await ctx.send('既に参加者募集中です')
         return
-    await bot.game_status = 'waiting'
+    bot.game_status = 'waiting'
     await ctx.send('参加者の募集を開始しました')
 
 bot.run(token)

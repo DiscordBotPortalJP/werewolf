@@ -1,4 +1,5 @@
 from discord.ext import commands
+from cogs.utils.errors import NoGuildError, PermissionNotFound
 
 # ゲーム開始前：nothing
 # 参加者募集中:waiting
@@ -11,11 +12,11 @@ class GameStatus(commands.Cog):
 
     async def cog_check(self, ctx):
         if ctx.guild is None:
-            await ctx.send('サーバー内でのみ実行できるコマンドです')
-            return False
+            raise NoGuildError
+
         if not ctx.author.guild_permissions.administrator:
-            await ctx.send('コマンドを実行する権限がありません')
-            return False
+            raise PermissionNotFound
+
         return True
 
     @commands.command()

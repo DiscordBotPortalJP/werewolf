@@ -34,6 +34,7 @@
 from discord.ext import commands
 import os
 import traceback
+from cogs.utils.errors import NoGuildError, PermissionNotFound
 
 bot = commands.Bot(command_prefix='/')
 token = os.environ['DISCORD_BOT_WEREWOLF_TOKEN']
@@ -41,7 +42,12 @@ bot.game_status = 'nothing'
 
 @bot.event
 async def on_command_error(ctx, error):
-    if isinstance(error, commands.CheckFailure):
+    if isinstance(error, NoGuildError):
+        await ctx.send('サーバー内でのみ実行できるコマンドです')
+        return
+
+    if isinstance(error, PermissionNotFound):
+        await ctx.send('コマンドを実行する権限がありません')
         return
 
     if isinstance(error, commands.CommandNotFound):

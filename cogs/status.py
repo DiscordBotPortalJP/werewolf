@@ -29,6 +29,14 @@ class GameStatus(commands.Cog):
         self.bot.game_status = 'waiting'
         await ctx.send('参加者の募集を開始しました')
 
+    # ゲームを開始するコマンド
+    # 編成テンプレート(urils.roles)から役職を割り振る（Player.roleに役職名をセット)
+    # ステータスを変更する
+    # ゲーム開始メッセージを送信
+    @commands.command()
+    async def start(self, ctx):
+        pass
+
     @commands.command()
     async def set_nothing(self, ctx):
         self.bot.game_status = 'nothing'

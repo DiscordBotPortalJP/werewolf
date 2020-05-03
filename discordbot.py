@@ -37,7 +37,15 @@ import os
 bot = commands.Bot(command_prefix='/')
 token = os.environ['DISCORD_BOT_WEREWOLF_TOKEN']
 bot.game_status = 'nothing'
+bot.players = []  # 参加者の Player オブジェクトのリスト
 
-
+# 参加者募集
 bot.load_extension('cogs.status')
+
+# プレイヤーの参加
+
+
+# ゲーム開始
+
+
 bot.run(token)

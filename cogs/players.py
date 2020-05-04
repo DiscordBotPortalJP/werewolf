@@ -23,7 +23,7 @@ class PlayersCog(commands.Cog):
             return await ctx.send("すでにゲームに参加しています。")
         
         self.bot.players.append(user)
-        await ctx.send(f"{user.nick if user.nick else user.name}さんが参加しました。")
+        await ctx.send(f"{user.mention}さんが参加しました。")
 
 
 def setup(bot):

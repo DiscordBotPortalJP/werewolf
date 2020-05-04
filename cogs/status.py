@@ -45,19 +45,27 @@ class GameStatus(commands.Cog):
             await ctx.send('既にゲーム中です')
             return
 
-        if self.bot.game_status == 'noting':
+        if self.bot.game_status == 'nothing':
             await ctx.send('まだ参加者を募集していません')
             return
 
-        count = len(self.bot.players)
-        for role in random.sample(simple[count], count):
-            for player in self.bot.players:
-                user = self.bot.get_user(player.id)
-                await user.send(f'あなたの役職は{role}です')  # ユーザーにdmで役職を通知
+        # 参加者の人数(int)を取得 => n
+        n = len(self.bot.players)
+        # 役職の文字列(配列)を取得
+        role = simple[n]
+        # 役職の文字列(配列)をシャッフル
+        role_list = random.sample(role, n)
+        # 0..n までの数値を回す
+        for i in range(n):
+            # シャッフルした役職の配列と参加者の配列を同じindexで設定する
+            player = self.bot.players[i]
+            user = self.bot.get_user(player.id)
+            role = role_list[i]
+            await user.send(f'あなたの役職は{role}です')
+            if role == '村':
+                continue
 
-                if role == '村':  # 村人なら変更の必要が無いためスキップ
-                    continue
-                player.set_role(role)
+            player.set_role(role)
 
         await ctx.send('役職が配布されました。配布された自分の役職を確認し、準備を完了させてください。')
         self.bot.game_status = 'playing'

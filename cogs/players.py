@@ -5,7 +5,6 @@ from discord.ext import commands
 class PlayersCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.bot.players = []
 
     # ゲームに参加するコマンド
     # bot.players に Player オブジェクトを格納する

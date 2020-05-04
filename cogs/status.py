@@ -18,7 +18,7 @@ class GameStatus(commands.Cog):
         if not ctx.author.guild_permissions.administrator:
             await self.bot.on_command_error(ctx, PermissionNotFound())
             return False
-        
+
         return True
 
     @commands.command()

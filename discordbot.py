@@ -45,10 +45,10 @@ bot.players = []  # 参加者の Player オブジェクトのリスト
 @bot.event
 async def on_command_error(ctx, error):
     """エラーハンドリング"""
-    
+
     if isinstance(error, commands.CheckFailure):
         return
-    
+
     if isinstance(error, PermissionNotFound):
         await ctx.send('コマンドを実行する権限がありません')
         return

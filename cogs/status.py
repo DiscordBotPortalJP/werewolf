@@ -1,4 +1,10 @@
+import random
+
 from discord.ext import commands
+
+from .utils.roles import simple
+import discord
+
 
 # ゲーム開始前：nothing
 # 参加者募集中:waiting
@@ -30,12 +36,40 @@ class GameStatus(commands.Cog):
         await ctx.send('参加者の募集を開始しました')
 
     # ゲームを開始するコマンド
-    # 編成テンプレート(urils.roles)から役職を割り振る（Player.roleに役職名をセット)
+    # 編成テンプレート(utils.roles)から役職を割り振る（Player.roleに役職名をセット)
     # ステータスを変更する
     # ゲーム開始メッセージを送信
     @commands.command()
     async def start(self, ctx):
-        pass
+        if self.bot.game_status == 'playing':
+            await ctx.send('既にゲーム中です')
+            return
+
+        if self.bot.game_status == 'nothing':
+            await ctx.send('まだ参加者を募集していません')
+            return
+
+        # 参加者の人数(int)を取得 => n
+        n = len(self.bot.players)
+        # 役職の文字列(配列)を取得
+        role = simple[n]
+        # 役職の文字列(配列)をシャッフル
+        role_list = random.sample(role, n)
+        # 0..n までの数値を回す
+        for i in range(n):
+            # シャッフルした役職の配列と参加者の配列を同じindexで設定する
+            player = self.bot.players[i]
+            user = self.bot.get_user(player.id)
+            role = role_list[i]
+            await user.send(f'あなたの役職は{role}です')
+            if role == '村':
+                continue
+
+            player.set_role(role)
+
+        await ctx.send('役職が配布されました。配布された自分の役職を確認し、準備を完了させてください。')
+        self.bot.game_status = 'playing'
+        await ctx.send('ゲームが開始されました。しばらくすると夜に切り替わるのでそれぞれの役職にあった行動をとってください。')
 
     @commands.command()
     async def set_nothing(self, ctx):

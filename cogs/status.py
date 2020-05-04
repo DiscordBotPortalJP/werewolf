@@ -57,7 +57,7 @@ class GameStatus(commands.Cog):
 
                 if role == '村':  # 村人なら変更の必要が無いためスキップ
                     continue
-                player.role = role
+                player.set_role(role)
 
         await ctx.send('役職が配布されました。配布された自分の役職を確認し、準備を完了させてください。')
         self.bot.game_status = 'playing'

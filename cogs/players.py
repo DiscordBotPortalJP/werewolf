@@ -17,12 +17,12 @@ class PlayersCog(commands.Cog):
         elif self.bot.game_status == "playing":
             return await ctx.send("現在ゲーム進行中です。")
         
-        user = ctx.author
-        if user in self.bot.players:
+        member = ctx.author
+        if member in self.bot.players:
             return await ctx.send("すでにゲームに参加しています。")
         
-        self.bot.players.append(user)
-        await ctx.send(f"{user.mention}さんが参加しました。")
+        self.bot.players.append(member)
+        await ctx.send(f"{member.mention}さんが参加しました。")
 
 
 def setup(bot):

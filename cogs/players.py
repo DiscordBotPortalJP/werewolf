@@ -19,10 +19,11 @@ class PlayersCog(commands.Cog):
             return await ctx.send("現在ゲーム進行中です。")
         
         member = ctx.author
-        if member in self.bot.players:
+        player = Player(member.id)
+        if player in self.bot.players:
             return await ctx.send("すでにゲームに参加しています。")
         
-        self.bot.players.append(Player(member.id))
+        self.bot.players.append(player)
         await ctx.send(f"{member.mention}さんが参加しました。")
 
 

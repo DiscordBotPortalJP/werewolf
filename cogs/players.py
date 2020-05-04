@@ -1,4 +1,5 @@
 from discord.ext import commands
+from cogs.utils.player import Player
 
 
 # 参加者を管理する
@@ -21,7 +22,7 @@ class PlayersCog(commands.Cog):
         if member in self.bot.players:
             return await ctx.send("すでにゲームに参加しています。")
         
-        self.bot.players.append(member)
+        self.bot.players.append(Player(member.id))
         await ctx.send(f"{member.mention}さんが参加しました。")
 
 

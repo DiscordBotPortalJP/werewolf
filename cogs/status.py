@@ -9,25 +9,27 @@ from cogs.utils.errors import PermissionNotFound, NotGuildChannel
 # ゲーム中:playing
 
 
+def is_village_win(players):
+    for player in players:
+        if player.role == '狼':
+            return False
+    return True
+
+
+def is_werewolf_win(players):
+    village_count = 0
+    werewolf_count = 0
+    for player in players:
+        if player.role == '狼':
+            werewolf_count += 1
+        else:
+            village_count += 1
+    return village_count <= werewolf_count
+
+
 class GameStatus(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-    def is_village_win(self):
-        for player in self.bot.players:
-            if player.role == '狼':
-                return False
-        return True
-
-    def is_werewolf_win(self):
-        village_count = 0
-        werewolf_count = 0
-        for player in self.bot.players:
-            if player.role == '狼':
-                werewolf_count += 1
-            else:
-                village_count += 1
-        return village_count <= werewolf_count
 
     async def cog_check(self, ctx):
         if ctx.guild is None:

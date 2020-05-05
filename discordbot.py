@@ -59,6 +59,7 @@ async def on_command_error(ctx, error):
 
     orig_error = getattr(error, "original", error)
     error_msg = ''.join(traceback.TracebackException.from_exception(orig_error).format())
+    error_msg = "```py\n" + error_msg + "\n```"
     await ctx.send(error_msg)
 
 

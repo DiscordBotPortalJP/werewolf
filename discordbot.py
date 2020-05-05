@@ -67,7 +67,7 @@ async def on_command_error(ctx, error):
 bot.load_extension('cogs.status')
 
 # プレイヤーの参加
-
+bot.load_extension('cogs.players')
 
 # ゲーム開始
 

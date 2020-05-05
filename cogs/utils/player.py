@@ -9,3 +9,12 @@ class Player():
 
     def set_role(self, role):
         self.role = role
+
+    def set_vote(self, player):
+        self.vote_target = player
+
+    def set_raid(self, player):
+        self.raid_target = player
+
+    def set_fortune(self, player):
+        self.fortune_target = player

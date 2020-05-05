@@ -1,5 +1,4 @@
 import discord
-import asyncio
 
 colmn_reactions = [
     '\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}',
@@ -40,9 +39,9 @@ class Pagenator:
 
     async def loop(self):
         def check(reaction, user):
-                if str(reaction.emoji) not in colmn_reactions + [back_reaction, go_reaction]:
-                    return False
-                return user.id == self.target_user.id and isinstance(reaction.message.channel, discord.DMChannel)
+            if str(reaction.emoji) not in colmn_reactions + [back_reaction, go_reaction]:
+                return False
+            return user.id == self.target_user.id and isinstance(reaction.message.channel, discord.DMChannel)
 
         while not self.bot.is_closed():
             reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=None)
@@ -96,7 +95,6 @@ class Pagenator:
             embed.add_field(name=str(i), value=str(column), inline=False)
 
         return embed
-
 
     def go_page(self):
         """ページを進める"""

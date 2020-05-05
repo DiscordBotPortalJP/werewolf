@@ -18,3 +18,12 @@ class Player():
 
     def set_fortune(self, player):
         self.fortune_target = player
+
+    def clear_vote_target(self):
+        self.vote_target = None
+
+    def clear_raid_target(self):
+        self.raid_target = None
+
+    def clear_fortune_target(self):
+        self.fortune_target = None

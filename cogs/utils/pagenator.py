@@ -23,7 +23,7 @@ class Pagenator:
         self.title = title
         self.desc = desc
 
-        # [[name, value], [name2, value2]]
+        # [value, value2, value3]
         self.data = data
         self.page = 0
 
@@ -88,8 +88,8 @@ class Pagenator:
     def get_embed(self):
         embed = discord.Embed(title=self.title, description=self.desc)
         embeded_data = self.data[self.page * 8:self.page * 8 + 8]
-        for column in embeded_data:
-            embed.add_field(name=column[0], value=column[1])
+        for i, column in enumerate(embeded_data, start=1):
+            embed.add_field(name=str(i), value=str(column))
 
         return embed
 

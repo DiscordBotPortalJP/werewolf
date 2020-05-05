@@ -4,6 +4,14 @@ from discord.ext import commands
 class Vote(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        # 処刑される人
+        self.voted_player = None
+
+        # 占いをされる人
+        self.fortuned_player = None
+
+        # 人狼に殺される人
+        self.killed_player = None
 
     async def fortune(self, player):
         """占い"""

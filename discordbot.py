@@ -56,6 +56,7 @@ bot.killed_player = None
 # cogの読み込み
 extensions = [
     'cogs.status',
+    'cots.players',
     'cogs.vote',
 ]
 

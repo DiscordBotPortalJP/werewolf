@@ -39,6 +39,9 @@ token = os.environ['DISCORD_BOT_WEREWOLF_TOKEN']
 bot.game_status = 'nothing'
 bot.players = []  # 参加者の Player オブジェクトのリスト
 
+# ゲームの経過日(投票、占い、襲撃先をリセット時に追加される)
+bot.days = 0
+
 # 処刑される人
 bot.voted_player = None
 

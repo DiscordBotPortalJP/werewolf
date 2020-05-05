@@ -39,6 +39,15 @@ token = os.environ['DISCORD_BOT_WEREWOLF_TOKEN']
 bot.game_status = 'nothing'
 bot.players = []  # 参加者の Player オブジェクトのリスト
 
+# 処刑される人
+bot.voted_player = None
+
+# 占いをされる人
+bot.fortuned_player = None
+
+# 人狼に殺される人
+bot.killed_player = None
+
 # 参加者募集
 bot.load_extension('cogs.status')
 

@@ -42,7 +42,7 @@ class Pagenator:
         def check(reaction, user):
                 if str(reaction.emoji) not in colmn_reactions + [back_reaction, go_reaction]:
                     return False
-                return user.id == self.target_user.id and isinstance(reaction.channel, discord.DMChannel)
+                return user.id == self.target_user.id and isinstance(reaction.message.channel, discord.DMChannel)
 
         while not self.bot.is_closed():
             reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=None)
@@ -50,6 +50,9 @@ class Pagenator:
             if emoji in colmn_reactions:
                 p = colmn_reactions.index(emoji)
                 embeded_data = self.data[self.page * 8:self.page * 8 + 8]
+                if p >= len(embeded_data):
+                    continue
+
                 selected = embeded_data[p]
                 return selected
 
@@ -76,7 +79,8 @@ class Pagenator:
         if self.message is not None:
             return
 
-        message = await self.channel.send(self.get_embed())
+        message = await self.channel.send(embed=self.get_embed())
+        self.message = message
         await self.add_reactions()
         return await self.loop()
 
@@ -89,7 +93,7 @@ class Pagenator:
         embed = discord.Embed(title=self.title, description=self.desc)
         embeded_data = self.data[self.page * 8:self.page * 8 + 8]
         for i, column in enumerate(embeded_data, start=1):
-            embed.add_field(name=str(i), value=str(column))
+            embed.add_field(name=str(i), value=str(column), inline=False)
 
         return embed
 

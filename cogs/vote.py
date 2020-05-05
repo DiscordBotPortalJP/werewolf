@@ -5,8 +5,7 @@ class Vote(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    async def fortune(self, all_player, player):
-
+    async def furtune(self, player):
         """占い"""
         pass
 

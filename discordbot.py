@@ -51,8 +51,15 @@ bot.fortuned_player = None
 # 人狼に殺される人
 bot.killed_player = None
 
-# 参加者募集
-bot.load_extension('cogs.status')
+# cogの読み込み
+extensions = [
+    'cogs.status',
+    'cogs.vote',
+]
+
+for extension in extensions:
+    bot.load_extension(extension)
+
 
 # プレイヤーの参加
 

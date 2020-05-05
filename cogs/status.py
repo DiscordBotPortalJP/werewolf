@@ -19,6 +19,16 @@ class GameStatus(commands.Cog):
                 return False
         return True
 
+    def is_werewolf_win(self):
+        village_count = 0
+        werewolf_count = 0
+        for player in self.bot.players:
+            if player.role == '狼':
+                werewolf_count += 1
+            else:
+                village_count += 1
+        return village_count <= werewolf_count
+
     async def cog_check(self, ctx):
         if ctx.guild is None:
             await self.bot.on_command_error(ctx, NotGuildChannel())

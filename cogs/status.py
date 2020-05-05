@@ -13,6 +13,12 @@ class GameStatus(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    def is_village_win(self):
+        for player in self.bot.players:
+            if player.role == '狼':
+                return False
+        return True
+
     async def cog_check(self, ctx):
         if ctx.guild is None:
             await self.bot.on_command_error(ctx, NotGuildChannel())

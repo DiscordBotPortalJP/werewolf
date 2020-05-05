@@ -3,7 +3,6 @@ import random
 from discord.ext import commands
 
 from .utils.roles import simple
-import discord
 
 
 # ゲーム開始前：nothing

@@ -33,6 +33,8 @@
 
 from discord.ext import commands
 import os
+import traceback
+from cogs.utils.errors import PermissionNotFound, NotGuildChannel
 
 bot = commands.Bot(command_prefix='/')
 token = os.environ['DISCORD_BOT_WEREWOLF_TOKEN']
@@ -51,11 +53,40 @@ bot.fortuned_player = None
 # 人狼に殺される人
 bot.killed_player = None
 
+# cogの読み込み
+extensions = [
+    'cogs.status',
+    'cogs.vote',
+]
+
+for extension in extensions:
+    bot.load_extension(extension)
+
+@bot.event
+async def on_command_error(ctx, error):
+    """エラーハンドリング"""
+
+    if isinstance(error, commands.CheckFailure):
+        return
+
+    if isinstance(error, PermissionNotFound):
+        await ctx.send('コマンドを実行する権限がありません')
+        return
+
+    if isinstance(error, NotGuildChannel):
+        await ctx.send('サーバー内でのみ実行できるコマンドです')
+        return
+
+    orig_error = getattr(error, "original", error)
+    error_msg = ''.join(traceback.TracebackException.from_exception(orig_error).format())
+    error_msg = "```py\n" + error_msg + "\n```"
+    await ctx.send(error_msg)
+
 # 参加者募集
 bot.load_extension('cogs.status')
 
 # プレイヤーの参加
-
+bot.load_extension('cogs.players')
 
 # ゲーム開始
 

@@ -25,6 +25,19 @@ class PlayersCog(commands.Cog):
         self.bot.players.append(player)
         await ctx.send(f"{member.mention}さんが参加しました。")
 
+    @commands.command()
+    async def leave(self, ctx):
+        if self.bot.game_status == "nothing":
+            return await ctx.send("現在ゲームはありません。")
+        elif self.bot.game_status == "playing":
+            return await ctx.send("既にゲームが始まっているため退出できません。")
+        member = ctx.author
+        for p in self.bot.players:
+            if member.id == p.id:
+                self.bot.players.remove(p)
+                return await ctx.send("ゲームから退出しました。")
+        return await ctx.send("ゲームに参加していません。")
+
 
 def setup(bot):
     bot.add_cog(PlayersCog(bot))

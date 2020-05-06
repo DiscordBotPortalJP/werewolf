@@ -12,6 +12,9 @@ class Game():
         channel (discord.TextChannel): ゲームを進行するチャンネル
         players (List[Player]): 参加者リスト
         days (int): ゲームの経過日
+        executed (Optional[Player]): 処刑されたプレイヤー
+        raided (Optional[Player]): 襲撃されたプレイヤー
+        fortuned (Optional[str]): 占い結果
     """
 
     def __init__(self):
@@ -19,6 +22,9 @@ class Game():
         self.channel = None
         self.players = []
         self.days = 0
+        self.executed = None
+        self.raided = None
+        self.fortuned = None
 
     @property
     def alive_players(self) -> List[Player]:
@@ -90,17 +96,18 @@ class Game():
 
     def execute(self) -> Player:
         """処刑処理"""
-        return self.targeting(self.votes).set_dead()
+        self.executed = self.targeting(self.votes).set_dead()
+        return self
 
     def raid(self) -> Optional[Player]:
         """襲撃処理"""
         target = self.targeting(self.raids)
-        if target.is_dead:
-            return None
-        return target.set_dead()
+        if not target.is_dead:
+            self.raided = target.set_dead()
+        return self
 
     def fortune(self) -> Optional[str]:
         """占い処理"""
         if self.fortuneteller is not None:
-            return self.fortuneteller.fortune_target.get_side()
-        return None
+            self.fortuned = self.fortuneteller.fortune_target.get_side()
+        return self

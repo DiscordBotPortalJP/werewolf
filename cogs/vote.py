@@ -2,14 +2,14 @@ from cogs.utils import player
 from discord.ext import commands
 
 
-def is_village_win(players):
+def is_village_win(players) -> bool:
     for p in players:
         if p.role == '狼':
             return False
     return True
 
 
-def is_werewolf_win(players):
+def is_werewolf_win(players) -> bool:
     village_count = 0
     werewolf_count = 0
     for p in players:
@@ -24,8 +24,8 @@ class Vote(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # 日付変更処理
     async def change_date(self, ctx):
+        """日付変更処理"""
         if not player.is_set_target():
             return
 

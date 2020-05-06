@@ -38,10 +38,23 @@ class Player():
     def clear_fortune_target(self):
         self.fortune_target = None
 
+    def get_side(self):  # プレイヤーの陣営を取得
+        if self.role in '村占':
+            return '村人陣営'
+        if self.role in '狼':
+            return '人狼陣営'
+
 
 # プレイヤーのリストから人狼を抽出
 def get_werewolfs(players):
     return [p for p in players if p.role == '狼']
+
+
+# プレイヤーのリストから占い師を抽出
+def get_fortuneteller(players):
+    for p in players:
+        if p.role == '占':
+            return p
 
 
 # 指定リストから実行対象を選出
@@ -71,3 +84,8 @@ def raid(players):
     if target.is_dead:
         return None
     return target.set_dead()
+
+
+# 占い処理
+def fortune(players):
+    return get_fortuneteller(players).fortune_target.get_side()

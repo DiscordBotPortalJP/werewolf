@@ -1,4 +1,4 @@
-from cogs.utils.player import Player, execute, raid
+from cogs.utils.player import Player, execute, raid, fortune
 
 player1 = Player(1)
 player2 = Player(2)
@@ -31,3 +31,12 @@ def test_raid():
     assert raid(players) is player3
     assert player3.is_dead is True
     assert raid(players) is None
+
+
+def test_fortune():
+    player1.set_role('狼')
+    player5.set_role('占').set_fortune(player1)
+    assert fortune(players) == '人狼陣営'
+
+    player1.set_role('村')
+    assert fortune(players) == '村人陣営'

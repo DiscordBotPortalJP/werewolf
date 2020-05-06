@@ -1,5 +1,5 @@
 import pytest
-from cogs.status import is_village_win, is_werewolf_win
+from cogs.vote import is_village_win, is_werewolf_win
 from cogs.utils.player import Player
 
 

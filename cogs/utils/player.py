@@ -31,18 +31,26 @@ class Player():
 
     def clear_vote_target(self):
         self.vote_target = None
+        return self
 
     def clear_raid_target(self):
         self.raid_target = None
+        return self
 
     def clear_fortune_target(self):
         self.fortune_target = None
+        return self
 
     def get_side(self):  # プレイヤーの陣営を取得
         if self.role in '村占':
             return '村人陣営'
         if self.role in '狼':
             return '人狼陣営'
+
+
+# 生存者リスト
+def alive_players(players):
+    return [p for p in players if not p.is_dead]
 
 
 # プレイヤーのリストから人狼を抽出
@@ -55,6 +63,7 @@ def get_fortuneteller(players):
     for p in players:
         if p.role == '占':
             return p
+    return None
 
 
 # 全員が指定完了しているか
@@ -100,4 +109,7 @@ def raid(players):
 
 # 占い処理
 def fortune(players):
-    return get_fortuneteller(players).fortune_target.get_side()
+    fortuneteller = get_fortuneteller(players)
+    if fortuneteller is not None:
+        return fortuneteller.fortune_target.get_side()
+    return None

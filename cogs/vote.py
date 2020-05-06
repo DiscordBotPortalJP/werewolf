@@ -5,21 +5,16 @@ class Vote(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    async def fortune(self, all_player, player):
-
-        """占い"""
-        pass
-
-    async def wolf(self, players):
-        """人狼"""
-        pass
-
-    async def player_vote(self, players):
-        """処刑"""
+    @commands.command()
+    async def vote(self, ctx):
         pass
 
     @commands.command()
-    async def vote(self, ctx):
+    async def raid(self, ctx):
+        pass
+
+    @commands.command()
+    async def fortune(self, ctx):
         pass
 
 

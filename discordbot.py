@@ -47,12 +47,13 @@ bot.days = 0
 # cogの読み込み
 extensions = [
     'cogs.status',
-    'cots.players',
+    'cogs.players',
     'cogs.vote',
 ]
 
 for extension in extensions:
     bot.load_extension(extension)
+
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -73,14 +74,6 @@ async def on_command_error(ctx, error):
     error_msg = ''.join(traceback.TracebackException.from_exception(orig_error).format())
     error_msg = "```py\n" + error_msg + "\n```"
     await ctx.send(error_msg)
-
-# 参加者募集
-bot.load_extension('cogs.status')
-
-# プレイヤーの参加
-bot.load_extension('cogs.players')
-
-# ゲーム開始
 
 
 bot.run(token)

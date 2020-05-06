@@ -18,6 +18,7 @@ class Player():
 
     def set_role(self, role):
         self.role = role
+        return self
 
     def set_vote(self, player):
         self.vote_target = player
@@ -38,14 +39,35 @@ class Player():
         self.fortune_target = None
 
 
+# プレイヤーのリストから人狼を抽出
+def get_werewolfs(players):
+    return [p for p in players if p.role == '狼']
+
+
+# 指定リストから実行対象を選出
+def targeting(specifications):
+    max_specified_count = max(specifications.values())
+    max_specified_players = []
+    for vote in specifications.most_common():
+        if vote[1] == max_specified_count:
+            max_specified_players.append(vote[0])
+        else:
+            break
+    return random.choice(max_specified_players)
+
+
 # 処刑処理
 def execute(players):
-    votes = collections.Counter(p.vote_target for p in players)
-    max_voted_count = max(votes.values())
+    specifications = collections.Counter(p.vote_target for p in players)
+    target = targeting(specifications)
+    return target.set_dead()
 
-    max_voted_players = []
-    for vote in votes.most_common():
-        if vote[1] == max_voted_count:
-            max_voted_players.append(vote[0])
-        else:
-            return random.choice(max_voted_players).set_dead()
+
+# 襲撃処理
+def raid(players):
+    werewolfs = get_werewolfs(players)
+    specifications = collections.Counter(w.raid_target for w in werewolfs)
+    target = targeting(specifications)
+    if target.is_dead:
+        return None
+    return target.set_dead()

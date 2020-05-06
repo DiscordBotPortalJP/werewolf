@@ -57,6 +57,18 @@ def get_fortuneteller(players):
             return p
 
 
+# 全員が指定完了しているか
+def is_set_target(players):
+    for p in players:
+        if p.vote_target is None:
+            return False
+        if p.role == '狼' and p.raid_target is None:
+            return False
+        if p.role == '占' and p.fortune_target is None:
+            return False
+    return True
+
+
 # 指定リストから実行対象を選出
 def targeting(specifications):
     max_specified_count = max(specifications.values())

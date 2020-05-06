@@ -1,4 +1,4 @@
-from cogs.utils.player import Player, execute, raid, fortune
+from cogs.utils.player import Player, execute, raid, fortune, is_set_target
 
 player1 = Player(1)
 player2 = Player(2)
@@ -6,6 +6,25 @@ player3 = Player(3)
 player4 = Player(4)
 player5 = Player(5)
 players = (player1, player2, player3, player4, player5)
+
+
+def test_is_set_target():
+    player1.set_vote(player2)
+    player2.set_vote(player3)
+    player3.set_vote(player4)
+    player4.set_vote(player5)
+    assert is_set_target(players) is False
+
+    player5.set_vote(player1)
+    player1.set_role('狼')
+    assert is_set_target(players) is False
+
+    player1.set_raid(player2)
+    player5.set_role('占')
+    assert is_set_target(players) is False
+
+    player5.set_fortune(player1)
+    assert is_set_target(players) is True
 
 
 def test_execute():

@@ -1,3 +1,7 @@
+import random
+import collections
+
+
 # 参加者
 class Player():
     def __init__(self, discord_id):
@@ -28,3 +32,16 @@ class Player():
 
     def clear_fortune_target(self):
         self.fortune_target = None
+
+
+# 処刑処理
+def execute(players):
+    votes = collections.Counter(p.vote_target for p in players)
+    max_voted_count = max(votes.values())
+
+    max_voted_players = []
+    for vote in votes.most_common():
+        if vote[1] == max_voted_count:
+            max_voted_players.append(vote[0])
+        else:
+            return random.choice(max_voted_players)

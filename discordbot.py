@@ -1,13 +1,11 @@
 import os
 import traceback
 from discord.ext import commands
+from cogs.utils.game import Game
 from cogs.utils.errors import PermissionNotFound, NotGuildChannel, NotDMChannel
 
 bot = commands.Bot(command_prefix='/')
-bot.game_status = 'nothing'
-bot.game_channel = None
-bot.players = []  # 参加者の Player オブジェクトのリスト
-bot.days = 0  # ゲームの経過日
+bot.game = Game()
 
 extensions = [
     'cogs.status',

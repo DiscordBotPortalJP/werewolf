@@ -22,25 +22,24 @@ class GameStatus(commands.Cog):
     @commands.command()
     async def create(self, ctx):
         """ゲームを作成するコマンド"""
-        if self.bot.game_status == 'playing':
+        if self.bot.game.status == 'playing':
             await ctx.send('ゲーム中です')
             return
-        if self.bot.game_status == 'waiting':
+        if self.bot.game.status == 'waiting':
             await ctx.send('既に参加者募集中です')
             return
-        self.bot.game_status = 'waiting'
-        self.bot.game_channel = ctx.channel
+        self.bot.game.status = 'waiting'
+        self.bot.game.channel = ctx.channel
         await ctx.send('参加者の募集を開始しました')
 
     @commands.command()
     async def start(self, ctx):
         """ゲームを開始するコマンド"""
-        if self.bot.game_status == 'playing':
-            await ctx.send('既にゲーム中です')
-            return
-
-        if self.bot.game_status == 'nothing':
+        if self.bot.game is None:
             await ctx.send('まだ参加者を募集していません')
+            return
+        if self.bot.game.status == 'playing':
+            await ctx.send('既にゲーム中です')
             return
 
         n = len(self.bot.players)
@@ -62,22 +61,22 @@ class GameStatus(commands.Cog):
 
     @commands.command()
     async def set_nothing(self, ctx):
-        self.bot.game_status = 'nothing'
-        await ctx.send(f'game_status を {self.bot.game_status} に変更しました')
+        self.bot.game.status = 'nothing'
+        await ctx.send(f'game.status を {self.bot.game.status} に変更しました')
 
     @commands.command()
     async def set_playing(self, ctx):
-        self.bot.game_status = 'playing'
-        await ctx.send(f'game_status を {self.bot.game_status} に変更しました')
+        self.bot.game.status = 'playing'
+        await ctx.send(f'game.status を {self.bot.game.status} に変更しました')
 
     @commands.command()
     async def set_waiting(self, ctx):
-        self.bot.game_status = 'waiting'
-        await ctx.send(f'game_status を {self.bot.game_status} に変更しました')
+        self.bot.game.status = 'waiting'
+        await ctx.send(f'game.status を {self.bot.game.status} に変更しました')
 
     @commands.command()
     async def game_status(self, ctx):
-        await ctx.send(f'現在の game_status は {self.bot.game_status} です')
+        await ctx.send(f'現在の game.status は {self.bot.game.status} です')
 
 
 def setup(bot):

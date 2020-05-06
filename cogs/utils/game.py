@@ -1,0 +1,106 @@
+import random
+import collections
+from typing import List, Optional
+from cogs.utils.player import Player
+
+
+class Game():
+    """人狼ゲーム
+
+    Attributes:
+        status (str): 進行状況
+        channel (discord.TextChannel): ゲームを進行するチャンネル
+        players (List[Player]): 参加者リスト
+        days (int): ゲームの経過日
+    """
+
+    def __init__(self):
+        self.status = 'nothing'
+        self.channel = None
+        self.players = []
+        self.days = 0
+
+    @property
+    def alive_players(self) -> List[Player]:
+        """生存プレイヤーリスト"""
+        return [p for p in self.players if not p.is_dead]
+
+    @property
+    def alive_werewolfs(self) -> List[Player]:
+        """生存人狼プレイヤーリスト"""
+        return [p for p in self.players if p.role == '狼']
+
+    @property
+    def fortuneteller(self) -> Optional[Player]:
+        """占い師プレイヤー"""
+        for p in self.players:
+            if p.role == '占':
+                return p
+        return None
+
+    @property
+    def votes(self):
+        """投票指定データ"""
+        return collections.Counter(p.vote_target for p in self.alive_players)
+
+    @property
+    def raids(self):
+        """襲撃指定データ"""
+        return collections.Counter(w.raid_target for w in self.alive_werewolfs)
+
+    def is_village_win(self) -> bool:
+        """村人陣営が勝利しているか"""
+        for p in self.players:
+            if p.role == "狼":
+                return False
+        return True
+
+    def is_werewolf_win(self) -> bool:
+        """人狼陣営が勝利しているか"""
+        village_count = 0
+        werewolf_count = 0
+        for p in self.players:
+            if p.role == "狼":
+                werewolf_count += 1
+            else:
+                village_count += 1
+        return village_count <= werewolf_count
+
+    def is_set_target(self) -> bool:
+        """全員が指定完了しているか"""
+        for p in self.alive_players:
+            if p.vote_target is None:
+                return False
+            if p.role == '狼' and p.raid_target is None:
+                return False
+            if p.role == '占' and p.fortune_target is None:
+                return False
+        return True
+
+    def targeting(self, specifications) -> Player:
+        """指定リストから実行対象を選出"""
+        max_specified_count = max(specifications.values())
+        max_specified_players = []
+        for vote in specifications.most_common():
+            if vote[1] == max_specified_count:
+                max_specified_players.append(vote[0])
+            else:
+                break
+        return random.choice(max_specified_players)
+
+    def execute(self) -> Player:
+        """処刑処理"""
+        return self.targeting(self.votes).set_dead()
+
+    def raid(self) -> Optional[Player]:
+        """襲撃処理"""
+        target = self.targeting(self.raids)
+        if target.is_dead:
+            return None
+        return target.set_dead()
+
+    def fortune(self) -> Optional[str]:
+        """占い処理"""
+        if self.fortuneteller is not None:
+            return self.fortuneteller.fortune_target.get_side()
+        return None

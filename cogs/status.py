@@ -34,6 +34,7 @@ class GameStatus(commands.Cog):
             await ctx.send('既に参加者募集中です')
             return
         self.bot.game_status = 'waiting'
+        self.bot.game_channel = ctx.channel
         await ctx.send('参加者の募集を開始しました')
 
     # ゲームを開始するコマンド

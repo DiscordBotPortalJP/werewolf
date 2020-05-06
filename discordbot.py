@@ -39,6 +39,7 @@ from cogs.utils.errors import PermissionNotFound, NotGuildChannel
 bot = commands.Bot(command_prefix='/')
 token = os.environ['DISCORD_BOT_WEREWOLF_TOKEN']
 bot.game_status = 'nothing'
+bot.game_channel = None
 bot.players = []  # 参加者の Player オブジェクトのリスト
 
 # ゲームの経過日(投票、占い、襲撃先をリセット時に追加される)

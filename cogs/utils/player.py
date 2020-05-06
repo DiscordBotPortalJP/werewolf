@@ -12,6 +12,10 @@ class Player():
         self.raid_target = None  # ?Player
         self.fortune_target = None  # ?Palyer
 
+    def set_dead(self):
+        self.is_dead = True
+        return self
+
     def set_role(self, role):
         self.role = role
 
@@ -44,4 +48,4 @@ def execute(players):
         if vote[1] == max_voted_count:
             max_voted_players.append(vote[0])
         else:
-            return random.choice(max_voted_players)
+            return random.choice(max_voted_players).set_dead()

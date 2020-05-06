@@ -19,3 +19,4 @@ def test_execute():
     assert execute(players) in (player1, player2)
     player5.set_vote(player2)
     assert execute(players) is player2
+    assert player2.is_dead is True

@@ -42,11 +42,11 @@ class GameStatus(commands.Cog):
             await ctx.send('既にゲーム中です')
             return
 
-        n = len(self.bot.players)
+        n = len(self.bot.game.players)
         role = simple[n]
         role_list = random.sample(role, n)
         for i in range(n):
-            player = self.bot.players[i]
+            player = self.bot.game.players[i]
             user = self.bot.get_user(player.id)
             role = role_list[i]
             await user.send(f'あなたの役職は{role}です')
@@ -56,7 +56,7 @@ class GameStatus(commands.Cog):
             player.set_role(role)
 
         await ctx.send('役職が配布されました。配布された自分の役職を確認し、準備を完了させてください。')
-        self.bot.game_status = 'playing'
+        self.bot.game.status = 'playing'
         await ctx.send('ゲームが開始されました。しばらくすると夜に切り替わるのでそれぞれの役職にあった行動をとってください。')
 
     @commands.command()

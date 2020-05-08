@@ -47,12 +47,12 @@ class Game():
     @property
     def votes(self):
         """投票指定データ"""
-        return collections.Counter(p.vote_target for p in self.alive_players)
+        return [player.vote_target for player in self.alive_players]
 
     @property
     def raids(self):
         """襲撃指定データ"""
-        return collections.Counter(w.raid_target for w in self.alive_werewolfs)
+        return [werewolf.raid_target for werewolf in self.alive_werewolfs]
 
     def is_village_win(self) -> bool:
         """村人陣営が勝利しているか"""
@@ -83,25 +83,21 @@ class Game():
                 return False
         return True
 
-    def targeting(self, specifications) -> Player:
+    def elect(self, players) -> Player:
         """指定リストから実行対象を選出"""
-        max_specified_count = max(specifications.values())
-        max_specified_players = []
-        for vote in specifications.most_common():
-            if vote[1] == max_specified_count:
-                max_specified_players.append(vote[0])
-            else:
-                break
-        return random.choice(max_specified_players)
+        aggregates = collections.Counter(players)
+        maximum = max(aggregates.values())
+        mosts = [a[0] for a in aggregates.most_common() if a[1] == maximum]
+        return random.choice(mosts)
 
     def execute(self) -> Player:
         """処刑処理"""
-        self.executed = self.targeting(self.votes).set_dead()
+        self.executed = self.elect(self.votes).set_dead()
         return self
 
     def raid(self) -> Optional[Player]:
         """襲撃処理"""
-        target = self.targeting(self.raids)
+        target = self.elect(self.raids)
         if not target.is_dead:
             self.raided = target.set_dead()
         return self

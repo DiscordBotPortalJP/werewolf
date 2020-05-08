@@ -92,14 +92,14 @@ class Game():
 
     def execute(self) -> Player:
         """処刑処理"""
-        self.executed = self.elect(self.votes).set_dead()
+        self.executed = self.elect(self.votes).die()
         return self
 
     def raid(self) -> Optional[Player]:
         """襲撃処理"""
         target = self.elect(self.raids)
         if not target.is_dead:
-            self.raided = target.set_dead()
+            self.raided = target.die()
         return self
 
     def fortune(self) -> Optional[str]:

@@ -26,7 +26,8 @@ class Player():
         if self.role in '狼':
             return '人狼陣営'
 
-    def set_dead(self):
+    def die(self):
+        """死亡する"""
         self.is_dead = True
         return self
 

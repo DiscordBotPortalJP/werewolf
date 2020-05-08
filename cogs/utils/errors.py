@@ -4,3 +4,6 @@ class PermissionNotFound(Exception):
 
 class NotGuildChannel(Exception):
     pass
+
+class NotDMChannel(Exception):
+    pass

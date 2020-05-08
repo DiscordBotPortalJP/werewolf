@@ -14,4 +14,4 @@ jobs:
     - name: Install dependencies
       run: python -m pip install discord.py[voice] pytest
     - name: Run pytest
-      run: pytest -p no:warnings
+      run: pytest

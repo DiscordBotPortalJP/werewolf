@@ -1,13 +1,7 @@
 import random
 from discord.ext import commands
-
 from cogs.utils.roles import simple
 from cogs.utils.errors import PermissionNotFound, NotGuildChannel
-
-
-# ゲーム開始前：nothing
-# 参加者募集中:waiting
-# ゲーム中:playing
 
 
 class GameStatus(commands.Cog):
@@ -27,6 +21,7 @@ class GameStatus(commands.Cog):
 
     @commands.command()
     async def create(self, ctx):
+        """ゲームを作成するコマンド"""
         if self.bot.game_status == 'playing':
             await ctx.send('ゲーム中です')
             return
@@ -37,12 +32,9 @@ class GameStatus(commands.Cog):
         self.bot.game_channel = ctx.channel
         await ctx.send('参加者の募集を開始しました')
 
-    # ゲームを開始するコマンド
-    # 編成テンプレート(utils.roles)から役職を割り振る（Player.roleに役職名をセット)
-    # ステータスを変更する
-    # ゲーム開始メッセージを送信
     @commands.command()
     async def start(self, ctx):
+        """ゲームを開始するコマンド"""
         if self.bot.game_status == 'playing':
             await ctx.send('既にゲーム中です')
             return
@@ -51,15 +43,10 @@ class GameStatus(commands.Cog):
             await ctx.send('まだ参加者を募集していません')
             return
 
-        # 参加者の人数(int)を取得 => n
         n = len(self.bot.players)
-        # 役職の文字列(配列)を取得
         role = simple[n]
-        # 役職の文字列(配列)をシャッフル
         role_list = random.sample(role, n)
-        # 0..n までの数値を回す
         for i in range(n):
-            # シャッフルした役職の配列と参加者の配列を同じindexで設定する
             player = self.bot.players[i]
             user = self.bot.get_user(player.id)
             role = role_list[i]

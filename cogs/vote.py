@@ -9,14 +9,14 @@ def get_player(bot, player_id):
             return p
 
 
-def is_village_win(players):
+def is_village_win(players) -> bool:
     for p in players:
         if p.role == '狼':
             return False
     return True
 
 
-def is_werewolf_win(players):
+def is_werewolf_win(players) -> bool:
     village_count = 0
     werewolf_count = 0
     for p in players:

@@ -2,17 +2,13 @@ from discord.ext import commands
 from cogs.utils.player import Player
 
 
-# 参加者を管理する
 class PlayersCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # ゲームに参加するコマンド
-    # bot.players に Player オブジェクトを格納する
-    # ステータスが参加者募集中かをチェックする
-    # 既に参加しているメンバーかをチェックする
     @commands.command()
     async def join(self, ctx):
+        """ゲームに参加するコマンド"""
         if self.bot.game_status == "nothing":
             return await ctx.send("現在ゲームはありません。")
         elif self.bot.game_status == "playing":
@@ -27,6 +23,7 @@ class PlayersCog(commands.Cog):
 
     @commands.command()
     async def leave(self, ctx):
+        """ゲームから退出するコマンド"""
         if self.bot.game_status == "nothing":
             return await ctx.send("現在ゲームはありません。")
         elif self.bot.game_status == "playing":

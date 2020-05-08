@@ -61,7 +61,7 @@ class Vote(commands.Cog):
             await guild.get_member(self.bot.game.fortuneteller.id).send(text)
 
         for p in self.bot.game.alive_players:
-            p.clear_vote_target().clear_raid_target().clear_fortune_target()
+            p.clear_vote().clear_raid().clear_fortune()
 
         self.bot.game.days += 1
 

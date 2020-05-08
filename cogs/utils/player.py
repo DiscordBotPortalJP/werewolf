@@ -1,3 +1,9 @@
+from __future__ import annotations
+from typing import Optional
+import random
+import collections
+
+
 class Player():
     """参加者
 
@@ -55,3 +61,48 @@ class Player():
     def clear_fortune(self):
         self.fortune_target = None
         return self
+
+
+class Players(list):
+    """参加者(複数)"""
+
+    @property
+    def alives(self) -> Players:
+        """生存者(複数)"""
+        return Players(p for p in self if not p.is_dead)
+
+    @property
+    def werewolfs(self) -> Players:
+        """人狼(複数)"""
+        return Players(p for p in self if p.role == '狼')
+
+    @property
+    def fortuneteller(self) -> Optional[Player]:
+        """占い師"""
+        for p in self:
+            if p.role == '占':
+                return p
+        return None
+
+    @property
+    def votes(self) -> Players:
+        """投票指定プレイヤー(複数)"""
+        return Players(p.vote_target for p in self.alives)
+
+    @property
+    def raids(self) -> Players:
+        """襲撃指定プレイヤー(複数)"""
+        return Players(w.raid_target for w in self.alives.werewolfs)
+
+    @property
+    def most(self) -> Player:
+        """最頻参加者"""
+        aggregates = collections.Counter(self)
+        maximum = max(aggregates.values())
+        mosts = [a[0] for a in aggregates.most_common() if a[1] == maximum]
+        return random.choice(mosts)
+
+    def get(self, player_id) -> Player:
+        for p in self:
+            if p.id == player_id:
+                return p

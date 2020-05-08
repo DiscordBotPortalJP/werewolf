@@ -8,7 +8,12 @@ player3 = Player(3)
 player4 = Player(4)
 player5 = Player(5)
 game = Game()
-game.players = (player1, player2, player3, player4, player5)
+game.players.append(player1)
+game.players.append(player2)
+game.players.append(player3)
+game.players.append(player4)
+game.players.append(player5)
+
 
 def test_is_set_target():
     player1.set_vote(player2)
@@ -65,6 +70,8 @@ def test_raid():
 
 
 def test_fortune():
+    player1.is_dead = False
+    player5.is_dead = False
     player1.set_role('狼')
     player5.set_role('占').set_fortune(player1)
     game.fortune()

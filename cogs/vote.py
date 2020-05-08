@@ -1,30 +1,13 @@
-from cogs.utils import player, pagenator, errors
-from discord.ext import commands
 import discord
+from discord.ext import commands
+from cogs.utils import pagenator, errors
+from cogs.utils.game import Game
 
 
 def get_player(bot, player_id):
     for p in bot.players:
         if p.id == player_id:
             return p
-
-
-def is_village_win(players) -> bool:
-    for p in players:
-        if p.role == '狼':
-            return False
-    return True
-
-
-def is_werewolf_win(players) -> bool:
-    village_count = 0
-    werewolf_count = 0
-    for p in players:
-        if p.role == '狼':
-            werewolf_count += 1
-        else:
-            village_count += 1
-    return village_count <= werewolf_count
 
 
 class Vote(commands.Cog):
@@ -39,50 +22,45 @@ class Vote(commands.Cog):
 
     # 日付変更処理
     async def change_date(self, ctx):
-        if not player.is_set_target(self.bot.players):
+        """日付変更処理"""
+        if not self.bot.game.is_set_target():
             return
 
-        players = player.alive_players(self.bot.players)
-        executed = player.execute(players)
-        text = f'投票の結果 {executed.id} さんが処刑されました'
-        await self.bot.game_channel.send(text)
+        self.bot.game.execute()
 
-        players = player.alive_players(self.bot.players)
-        raided = player.raided(players)
-        if raided is not None:
-            text = f'{raided.id} さんが無残な姿で発見されました'
-            await self.bot.game_channel.send(text)
-
-        if is_village_win(players):
+        if self.bot.game.is_village_win():
             text = 'ゲームが終了しました。人狼が全滅したため村人陣営の勝利です!'
-            await self.bot.game_channel.send(text)
-            self.bot.game_status = 'nothing'
-            self.bot.game_channel = None
-            self.bot.players = []
-            self.bot.days = 0
+            await self.bot.game.channel.send(text)
+            self.bot.game = Game()
             return
 
-        if is_werewolf_win(players):
+        if self.bot.game.is_werewolf_win():
             text = 'ゲームが終了しました。村人陣営の数が人狼陣営の数以下になったため人狼陣営の勝利です!'
-            await self.bot.game_channel.send(text)
-            self.bot.game_status = 'nothing'
-            self.bot.game_channel = None
-            self.bot.players = []
-            self.bot.days = 0
+            await self.bot.game.channel.send(text)
+            self.bot.game = Game()
             return
 
-        players = player.alive_players(self.bot.players)
-        fortuned = player.fortune(players)
-        if fortuned is not None:
-            guild = self.bot.game_channel.guild
-            text = f'占い結果は {fortuned} です。'
-            fortuneteller = player.get_fortuneteller(players)
-            await guild.get_member(fortuneteller.id).send(text)
+        self.bot.game.raid().fortune()
 
-        for p in players:
+        guild = self.bot.game.channel.guild
+
+        executed = guild.get_member(self.bot.game.executed.id)
+        text = f'投票の結果 {executed.display_name} さんが処刑されました'
+        await self.bot.game.channel.send(text)
+
+        if self.bot.game.raided is not None:
+            raided = guild.get_member(self.bot.game.raided.id)
+            text = f'{raided.display_name} さんが無残な姿で発見されました'
+            await self.bot.game.channel.send(text)
+
+        if self.bot.game.fortuned is not None:
+            text = f'占い結果は {self.bot.game.fortuned} です。'
+            await guild.get_member(self.bot.game.fortuneteller.id).send(text)
+
+        for p in self.bot.game.alive_players:
             p.clear_vote_target().clear_raid_target().clear_fortune_target()
 
-        self.bot.days += 1
+        self.bot.game.days += 1
 
     async def do_vote(self, ctx):
         d = {i.mention: i.id for i in self.bot.players if i.id != ctx.author.id}

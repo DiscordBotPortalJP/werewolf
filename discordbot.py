@@ -34,7 +34,7 @@
 from discord.ext import commands
 import os
 import traceback
-from cogs.utils.errors import PermissionNotFound, NotGuildChannel
+from cogs.utils.errors import PermissionNotFound, NotGuildChannel, NotDMChannel
 
 bot = commands.Bot(command_prefix='/')
 token = os.environ['DISCORD_BOT_WEREWOLF_TOKEN']
@@ -69,6 +69,10 @@ async def on_command_error(ctx, error):
 
     if isinstance(error, NotGuildChannel):
         await ctx.send('サーバー内でのみ実行できるコマンドです')
+        return
+
+    if isinstance(error, NotDMChannel):
+        await ctx.send('DM内でのみ実行できるコマンドです')
         return
 
     orig_error = getattr(error, "original", error)

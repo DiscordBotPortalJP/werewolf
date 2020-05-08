@@ -1,5 +1,6 @@
-from cogs.utils import player, pagenator
+from cogs.utils import player, pagenator, errors
 from discord.ext import commands
+import discord
 
 
 def get_player(bot, player_id):
@@ -29,6 +30,12 @@ def is_werewolf_win(players):
 class Vote(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    async def cog_check(self, ctx):
+        if not isinstance(ctx.channel, discord.DMChannel):
+            await self.bot.on_command_error(ctx, errors.NotDMChannel())
+            return False
+        return True
 
     # 日付変更処理
     async def change_date(self, ctx):
@@ -126,7 +133,7 @@ class Vote(commands.Cog):
     @commands.command()
     async def fortune(self, ctx):
         if get_player(self.bot, ctx.author.id).role != '占':
-            await ctx.author.send('あなたは占い師ではないので、占うことはできません。')
+            await ctx.send('あなたは占い師ではないので、占うことはできません。')
             return
         await self.select_fortune(ctx)
         await self.change_date(ctx)

@@ -92,8 +92,8 @@ class Vote(commands.Cog):
         d = {i.mention: i.id for i in self.bot.players if i.role != '狼' and i.id != ctx.author.id}
         data = list(d.keys())
         p = pagenator.Pagenator(self.bot, ctx.author, ctx.author, data,
-                                '殺すユーザーを選びます',
-                                '殺したいユーザーの番号のリアクションを押してください。\n左右矢印リアクションでページを変更できます。')
+                                '襲撃するユーザーを選びます',
+                                '襲撃したいユーザーの番号のリアクションを押してください。\n左右矢印リアクションでページを変更できます。')
         target = await p.start()
         target_player = get_player(self.bot, d[target])
         get_player(self.bot, ctx.author.id).set_raid(target_player)

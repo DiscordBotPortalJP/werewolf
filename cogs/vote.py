@@ -128,7 +128,7 @@ class Vote(commands.Cog):
         if get_player(self.bot, ctx.author.id).role != '占':
             await ctx.author.send('あなたは占い師ではないので、占うことはできません。')
             return
-        await self.do_fortune(ctx)
+        await self.select_fortune(ctx)
         await self.change_date(ctx)
 
 

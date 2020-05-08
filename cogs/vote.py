@@ -97,7 +97,7 @@ class Vote(commands.Cog):
         target = await p.start()
         target_player = get_player(self.bot, d[target])
         get_player(self.bot, ctx.author.id).set_raid(target_player)
-        await ctx.author.send('投票完了しました。')
+        await ctx.author.send('襲撃セット完了しました。')
 
     async def do_fortune(self, ctx):
         d = {i.mention: i.id for i in self.bot.players if i.id != ctx.author.id}

@@ -105,5 +105,5 @@ class Game():
     def fortune(self) -> Optional[str]:
         """占い処理"""
         if self.fortuneteller is not None:
-            self.fortuned = self.fortuneteller.fortune_target.get_side()
+            self.fortuned = self.fortuneteller.fortune_target.side
         return self

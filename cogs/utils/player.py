@@ -18,6 +18,14 @@ class Player():
         self.raid_target = None
         self.fortune_target = None
 
+    @property
+    def side(self) -> str:
+        """プレイヤーの陣営を取得"""
+        if self.role in '村占':
+            return '村人陣営'
+        if self.role in '狼':
+            return '人狼陣営'
+
     def set_dead(self):
         self.is_dead = True
         return self
@@ -46,10 +54,3 @@ class Player():
     def clear_fortune_target(self):
         self.fortune_target = None
         return self
-
-    def get_side(self) -> str:
-        """プレイヤーの陣営を取得"""
-        if self.role in '村占':
-            return '村人陣営'
-        if self.role in '狼':
-            return '人狼陣営'

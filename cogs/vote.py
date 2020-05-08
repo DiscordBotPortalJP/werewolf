@@ -118,7 +118,7 @@ class Vote(commands.Cog):
     @commands.command()
     async def raid(self, ctx):
         if get_player(self.bot, ctx.author.id).role != '狼':
-            await ctx.send('あなたは人狼ではないので、処刑することはできません。')
+            await ctx.send('あなたは人狼ではないので、襲撃することはできません。')
             return
         await self.do_raid(ctx)
         await self.change_date(ctx)

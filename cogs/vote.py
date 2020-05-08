@@ -26,7 +26,7 @@ class Vote(commands.Cog):
         if not self.bot.game.is_set_target():
             return
 
-        self.bot.game.execute().raid().fortune()
+        self.bot.game.execute()
 
         if self.bot.game.is_village_win():
             text = 'ゲームが終了しました。人狼が全滅したため村人陣営の勝利です!'
@@ -39,6 +39,8 @@ class Vote(commands.Cog):
             await self.bot.game.channel.send(text)
             self.bot.game = Game()
             return
+
+        self.bot.game.raid().fortune()
 
         guild = self.bot.game.channel.guild
 
@@ -53,9 +55,9 @@ class Vote(commands.Cog):
 
         if self.bot.game.fortuned is not None:
             text = f'占い結果は {self.bot.game.fortuned} です。'
-            await guild.get_member(self.game.fortuneteller.id).send(text)
+            await guild.get_member(self.bot.game.fortuneteller.id).send(text)
 
-        for p in self.game.alive_players:
+        for p in self.bot.game.alive_players:
             p.clear_vote_target().clear_raid_target().clear_fortune_target()
 
         self.bot.game.days += 1

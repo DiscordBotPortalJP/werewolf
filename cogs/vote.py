@@ -80,29 +80,29 @@ class Vote(commands.Cog):
     async def do_vote(self, ctx):
         d = {i.mention: i.id for i in self.bot.players if i.id != ctx.author.id}
         data = list(d.keys())
-        p = pagenator.Pagenator(self.bot, ctx.author, ctx.author, data, 
+        p = pagenator.Pagenator(self.bot, ctx.author, ctx.author, data,
                                 '処刑するユーザーを選びます',
                                 '処刑したいユーザーの番号のリアクションを押してください。\n左右矢印リアクションでページを変更できます。')
         target = await p.start()
         target_player = get_player(d[target])
         get_player(ctx.author.id).set_vote(target_player)
         await ctx.author.send('投票完了しました。')
-    
+
     async def do_raid(self, ctx):
-        d = {i.mention: i.id for i in self.bot.players if i.role  != '狼' and i.id != ctx.author.id}
+        d = {i.mention: i.id for i in self.bot.players if i.role != '狼' and i.id != ctx.author.id}
         data = list(d.keys())
-        p = pagenator.Pagenator(self.bot, ctx.author, ctx.author, data, 
+        p = pagenator.Pagenator(self.bot, ctx.author, ctx.author, data,
                                 '殺すユーザーを選びます',
                                 '殺したいユーザーの番号のリアクションを押してください。\n左右矢印リアクションでページを変更できます。')
         target = await p.start()
         target_player = get_player(d[target])
         get_player(ctx.author.id).set_raid(target_player)
         await ctx.author.send('投票完了しました。')
-    
+
     async def do_fortune(self, ctx):
         d = {i.mention: i.id for i in self.bot.players if i.id != ctx.author.id}
         data = list(d.keys())
-        p = pagenator.Pagenator(self.bot, ctx.author, ctx.author, data, 
+        p = pagenator.Pagenator(self.bot, ctx.author, ctx.author, data,
                                 '占うユーザーを選びます',
                                 '占いたいユーザーの番号のリアクションを押してください。\n左右矢印リアクションでページを変更できます。')
         target = await p.start()

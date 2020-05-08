@@ -46,6 +46,8 @@ def test_execute():
 
 
 def test_raid():
+    player1.is_dead = False
+    player2.is_dead = False
     player1.set_role('狼').set_raid(player4)
     player2.set_role('狼').set_raid(player5)
     game.raid()

@@ -34,7 +34,7 @@ class Game():
     @property
     def alive_werewolfs(self) -> List[Player]:
         """生存人狼プレイヤーリスト"""
-        return [p for p in self.players if p.role == '狼']
+        return [p for p in self.alive_players if p.role == '狼']
 
     @property
     def fortuneteller(self) -> Optional[Player]:

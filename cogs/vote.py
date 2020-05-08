@@ -108,7 +108,7 @@ class Vote(commands.Cog):
         target = await p.start()
         target_player = get_player(self.bot, d[target])
         get_player(self.bot, ctx.author.id).set_raid(target_player)
-        await ctx.author.send('投票完了しました。')
+        await ctx.author.send('占いセット完了しました。')
 
     @commands.command()
     async def vote(self, ctx):

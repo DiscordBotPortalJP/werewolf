@@ -40,15 +40,18 @@ class Vote(commands.Cog):
             self.bot.game = Game()
             return
 
-        text = f'投票の結果 {self.bot.game.executed.id} さんが処刑されました'
+        guild = self.bot.game.channel.guild
+
+        executed = guild.get_member(self.bot.game.executed.id)
+        text = f'投票の結果 {executed.display_name} さんが処刑されました'
         await self.bot.game.channel.send(text)
 
         if self.bot.game.raided is not None:
-            text = f'{self.bot.game.raided.id} さんが無残な姿で発見されました'
+            raided = guild.get_member(self.bot.game.raided.id)
+            text = f'{raided.display_name} さんが無残な姿で発見されました'
             await self.bot.game.channel.send(text)
 
         if self.bot.game.fortuned is not None:
-            guild = self.bot.game.channel.guild
             text = f'占い結果は {self.bot.game.fortuned} です。'
             await guild.get_member(self.game.fortuneteller.id).send(text)
 

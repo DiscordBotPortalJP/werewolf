@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from cogs.utils import pagenator, errors
 from cogs.utils.game import Game
+from cogs.utils.player import Players
 
 
 class Vote(commands.Cog):
@@ -59,38 +60,28 @@ class Vote(commands.Cog):
 
         self.bot.game.days += 1
 
-    async def do_vote(self, ctx):
-        d = {self.bot.get_user(i.id).mention: i.id for i in self.bot.game.players.alives if i.id != ctx.author.id}
+    async def select(self, ctx, players: Players, set_method, action: str):
+        d = {self.bot.get_user(i.id).mention: i.id for i in players if i.id != ctx.author.id}
         data = list(d.keys())
         p = pagenator.Pagenator(self.bot, ctx.author, ctx.author, data,
-                                '処刑するユーザーを選びます',
-                                '処刑したいユーザーの番号のリアクションを押してください。\n左右矢印リアクションでページを変更できます。')
+                                f'{action}指定するユーザーを選びます',
+                                f'{action}指定するユーザーの番号のリアクションを押してください。\n左右矢印リアクションでページを変更できます。')
         target = await p.start()
         target_player = self.bot.game.players.get(d[target])
-        self.bot.game.players.get(ctx.author.id).set_vote(target_player)
-        await ctx.author.send('投票完了しました。')
+        set_method(target_player)
+        await ctx.author.send(f'{action}指定完了しました。')
+
+    async def do_vote(self, ctx):
+        set_method = self.bot.game.players.get(ctx.author.id).set_vote
+        await self.select(ctx, self.bot.game.players.alives, set_method, '処刑')
 
     async def do_raid(self, ctx):
-        d = {self.bot.get_user(i.id).mention: i.id for i in self.bot.game.players.alives if i.role != '狼' and i.id != ctx.author.id}
-        data = list(d.keys())
-        p = pagenator.Pagenator(self.bot, ctx.author, ctx.author, data,
-                                '襲撃するユーザーを選びます',
-                                '襲撃したいユーザーの番号のリアクションを押してください。\n左右矢印リアクションでページを変更できます。')
-        target = await p.start()
-        target_player = self.bot.game.players.get(d[target])
-        self.bot.game.players.get(ctx.author.id).set_raid(target_player)
-        await ctx.author.send('襲撃セット完了しました。')
+        set_method = self.bot.game.players.get(ctx.author.id).set_raid
+        await self.select(ctx, self.bot.game.players.alives.werewolfs, set_method, '襲撃')
 
     async def do_fortune(self, ctx):
-        d = {self.bot.get_user(i.id).mention: i.id for i in self.bot.game.players.alives if i.id != ctx.author.id}
-        data = list(d.keys())
-        p = pagenator.Pagenator(self.bot, ctx.author, ctx.author, data,
-                                '占うユーザーを選びます',
-                                '占いたいユーザーの番号のリアクションを押してください。\n左右矢印リアクションでページを変更できます。')
-        target = await p.start()
-        target_player = self.bot.game.players.get(d[target])
-        self.bot.game.players.get(ctx.author.id).set_fortune(target_player)
-        await ctx.author.send('占いセット完了しました。')
+        set_method = self.bot.game.players.get(ctx.author.id).set_fortune
+        await self.select(ctx, self.bot.game.players.alives, set_method, '占い')
 
     @commands.command()
     async def vote(self, ctx):

@@ -119,6 +119,15 @@ class Vote(commands.Cog):
         await self.do_fortune(ctx)
         await self.change_date(ctx)
 
+    @commands.command()
+    async def werewolfs(self, ctx):
+        if get_player(self.bot, ctx.author.id).role != '狼':
+            await ctx.send('あなたは人狼ではありません')
+            return
+        guild = self.bot.game.channel.guild
+        werewolfs = ' '.join(guild.get_member(w.id).display_name for w in self.bot.game.alive_werewolfs)
+        await ctx.send(f'この村の人狼は {werewolfs} です。')
+
 
 def setup(bot):
     return bot.add_cog(Vote(bot))

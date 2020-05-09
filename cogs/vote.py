@@ -1,8 +1,9 @@
 import discord
 from discord.ext import commands
-from cogs.utils import pagenator, errors
+from cogs.utils import errors
 from cogs.utils.game import Game
 from cogs.utils.player import Players
+from cogs.utils.pagenator import Pagenator
 
 
 class Vote(commands.Cog):
@@ -61,14 +62,16 @@ class Vote(commands.Cog):
         self.bot.game.days += 1
 
     async def select(self, ctx, players: Players, set_method, action: str):
-        d = {self.bot.get_user(i.id).mention: i.id for i in players if i.id != ctx.author.id}
-        data = list(d.keys())
-        p = pagenator.Pagenator(self.bot, ctx.author, ctx.author, data,
-                                f'{action}指定するユーザーを選びます',
-                                f'{action}指定するユーザーの番号のリアクションを押してください。\n左右矢印リアクションでページを変更できます。')
-        target = await p.start()
-        target_player = self.bot.game.players.get(d[target])
-        set_method(target_player)
+        d = {self.bot.get_user(p.id).mention: p.id for p in players if p.id != ctx.author.id}
+        target = await Pagenator(
+            self.bot,
+            ctx.author,
+            ctx.author,
+            list(d.keys()),
+            f'{action}指定するユーザーを選びます',
+            f'{action}指定するユーザーの番号のリアクションを押してください。\n左右矢印リアクションでページを変更できます。'
+        ).start()
+        set_method(self.bot.game.players.get(d[target]))
         await ctx.author.send(f'{action}指定完了しました。')
 
     async def do_vote(self, ctx):

@@ -74,21 +74,21 @@ class Vote(commands.Cog):
         set_method(self.bot.game.players.get(d[target]))
         await ctx.author.send(f'{action}指定完了しました。')
 
-    async def do_vote(self, ctx):
+    async def select_vote(self, ctx):
         set_method = self.bot.game.players.get(ctx.author.id).set_vote
         await self.select(ctx, self.bot.game.players.alives, set_method, '処刑')
 
-    async def do_raid(self, ctx):
+    async def select_raid(self, ctx):
         set_method = self.bot.game.players.get(ctx.author.id).set_raid
         await self.select(ctx, self.bot.game.players.alives.werewolfs, set_method, '襲撃')
 
-    async def do_fortune(self, ctx):
+    async def select_fortune(self, ctx):
         set_method = self.bot.game.players.get(ctx.author.id).set_fortune
         await self.select(ctx, self.bot.game.players.alives, set_method, '占い')
 
     @commands.command()
     async def vote(self, ctx):
-        await self.do_vote(ctx)
+        await self.select_vote(ctx)
         await self.change_date(ctx)
 
     @commands.command()
@@ -96,7 +96,7 @@ class Vote(commands.Cog):
         if self.bot.game.players.get(ctx.author.id).role != '狼':
             await ctx.send('あなたは人狼ではないので、襲撃することはできません。')
             return
-        await self.do_raid(ctx)
+        await self.select_raid(ctx)
         await self.change_date(ctx)
 
     @commands.command()
@@ -104,7 +104,7 @@ class Vote(commands.Cog):
         if self.bot.game.players.get(ctx.author.id).role != '占':
             await ctx.send('あなたは占い師ではないので、占うことはできません。')
             return
-        await self.do_fortune(ctx)
+        await self.select_fortune(ctx)
         await self.change_date(ctx)
 
     @commands.command()

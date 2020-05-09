@@ -56,7 +56,7 @@ class Game():
 
     def is_village_win(self) -> bool:
         """村人陣営が勝利しているか"""
-        for p in self.players:
+        for p in self.alive_players:
             if p.role == "狼":
                 return False
         return True
@@ -65,7 +65,7 @@ class Game():
         """人狼陣営が勝利しているか"""
         village_count = 0
         werewolf_count = 0
-        for p in self.players:
+        for p in self.alive_players:
             if p.role == "狼":
                 werewolf_count += 1
             else:

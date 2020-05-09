@@ -5,7 +5,7 @@ from cogs.utils.game import Game
 
 
 def get_player(bot, player_id):
-    for p in bot.players:
+    for p in bot.game.players:
         if p.id == player_id:
             return p
 
@@ -24,9 +24,16 @@ class Vote(commands.Cog):
     async def change_date(self, ctx):
         """日付変更処理"""
         if not self.bot.game.is_set_target():
+            await self.bot.game.channel.send('指定が行われましたが、未指定の方がいます。')
             return
 
+        guild = self.bot.game.channel.guild
+
         self.bot.game.execute()
+
+        executed = guild.get_member(self.bot.game.executed.id)
+        text = f'投票の結果 {executed.display_name} さんが処刑されました'
+        await self.bot.game.channel.send(text)
 
         if self.bot.game.is_village_win():
             text = 'ゲームが終了しました。人狼が全滅したため村人陣営の勝利です!'
@@ -34,24 +41,20 @@ class Vote(commands.Cog):
             self.bot.game = Game()
             return
 
+        self.bot.game.raid()
+
+        if self.bot.game.raided is not None:
+            raided = guild.get_member(self.bot.game.raided.id)
+            text = f'{raided.display_name} さんが無残な姿で発見されました'
+            await self.bot.game.channel.send(text)
+
         if self.bot.game.is_werewolf_win():
             text = 'ゲームが終了しました。村人陣営の数が人狼陣営の数以下になったため人狼陣営の勝利です!'
             await self.bot.game.channel.send(text)
             self.bot.game = Game()
             return
 
-        self.bot.game.raid().fortune()
-
-        guild = self.bot.game.channel.guild
-
-        executed = guild.get_member(self.bot.game.executed.id)
-        text = f'投票の結果 {executed.display_name} さんが処刑されました'
-        await self.bot.game.channel.send(text)
-
-        if self.bot.game.raided is not None:
-            raided = guild.get_member(self.bot.game.raided.id)
-            text = f'{raided.display_name} さんが無残な姿で発見されました'
-            await self.bot.game.channel.send(text)
+        self.bot.game.fortune()
 
         if self.bot.game.fortuned is not None:
             text = f'占い結果は {self.bot.game.fortuned} です。'
@@ -63,7 +66,7 @@ class Vote(commands.Cog):
         self.bot.game.days += 1
 
     async def do_vote(self, ctx):
-        d = {i.mention: i.id for i in self.bot.players if i.id != ctx.author.id}
+        d = {self.bot.get_user(i.id).mention: i.id for i in self.bot.game.alive_players if i.id != ctx.author.id}
         data = list(d.keys())
         p = pagenator.Pagenator(self.bot, ctx.author, ctx.author, data,
                                 '処刑するユーザーを選びます',
@@ -74,7 +77,7 @@ class Vote(commands.Cog):
         await ctx.author.send('投票完了しました。')
 
     async def do_raid(self, ctx):
-        d = {i.mention: i.id for i in self.bot.players if i.role != '狼' and i.id != ctx.author.id}
+        d = {self.bot.get_user(i.id).mention: i.id for i in self.bot.game.alive_players if i.role != '狼' and i.id != ctx.author.id}
         data = list(d.keys())
         p = pagenator.Pagenator(self.bot, ctx.author, ctx.author, data,
                                 '襲撃するユーザーを選びます',
@@ -85,14 +88,14 @@ class Vote(commands.Cog):
         await ctx.author.send('襲撃セット完了しました。')
 
     async def do_fortune(self, ctx):
-        d = {i.mention: i.id for i in self.bot.players if i.id != ctx.author.id}
+        d = {self.bot.get_user(i.id).mention: i.id for i in self.bot.game.alive_players if i.id != ctx.author.id}
         data = list(d.keys())
         p = pagenator.Pagenator(self.bot, ctx.author, ctx.author, data,
                                 '占うユーザーを選びます',
                                 '占いたいユーザーの番号のリアクションを押してください。\n左右矢印リアクションでページを変更できます。')
         target = await p.start()
         target_player = get_player(self.bot, d[target])
-        get_player(self.bot, ctx.author.id).set_raid(target_player)
+        get_player(self.bot, ctx.author.id).set_fortune(target_player)
         await ctx.author.send('占いセット完了しました。')
 
     @commands.command()
@@ -113,7 +116,7 @@ class Vote(commands.Cog):
         if get_player(self.bot, ctx.author.id).role != '占':
             await ctx.send('あなたは占い師ではないので、占うことはできません。')
             return
-        await self.select_fortune(ctx)
+        await self.do_fortune(ctx)
         await self.change_date(ctx)
 
 

@@ -57,7 +57,7 @@ class GameStatus(commands.Cog):
 
         await ctx.send('役職が配布されました。配布された自分の役職を確認し、準備を完了させてください。')
         self.bot.game.status = 'playing'
-        await ctx.send('ゲームが開始されました。しばらくすると夜に切り替わるのでそれぞれの役職にあった行動をとってください。')
+        await ctx.send('ゲームが開始されました。それぞれの役職にあった行動をとってください。')
 
     @commands.command()
     async def set_nothing(self, ctx):

@@ -16,7 +16,6 @@ class Vote(commands.Cog):
             return False
         return True
 
-    # 日付変更処理
     async def change_date(self, ctx):
         """日付変更処理"""
         if not self.bot.game.is_set_target():

@@ -67,8 +67,8 @@ class Vote(commands.Cog):
             ctx.author,
             ctx.author,
             list(d.keys()),
-            f'{action}指定するユーザーを選びます',
-            f'{action}指定するユーザーの番号のリアクションを押してください。\n左右矢印リアクションでページを変更できます。'
+            f'{action}対象に指定するユーザーを選びます',
+            f'{action}対象に指定するユーザーの番号のリアクションを押してください。\n左右矢印リアクションでページを変更できます。'
         ).start()
         set_method(self.bot.game.players.get(d[target]))
         await ctx.author.send(f'{action}指定完了しました。')

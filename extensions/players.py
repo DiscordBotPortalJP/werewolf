@@ -36,5 +36,5 @@ class PlayersCog(commands.Cog):
         return await ctx.send("ゲームに参加していません。")
 
 
-def setup(bot):
-    bot.add_cog(PlayersCog(bot))
+async def setup(bot: commands.Bot) -> None:
+    await bot.add_cog(PlayersCog(bot))

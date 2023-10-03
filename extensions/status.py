@@ -1,7 +1,7 @@
 import random
 from discord.ext import commands
-from application.roles import simple
-from application.errors import PermissionNotFound, NotGuildChannel
+from utils.errors import PermissionNotFound, NotGuildChannel
+from constants.roles import simple
 
 
 class GameStatus(commands.Cog):
@@ -79,5 +79,5 @@ class GameStatus(commands.Cog):
         await ctx.send(f'現在の game.status は {self.bot.game.status} です')
 
 
-def setup(bot):
-    bot.add_cog(GameStatus(bot))
+async def setup(bot: commands.Bot) -> None:
+    await bot.add_cog(GameStatus(bot))

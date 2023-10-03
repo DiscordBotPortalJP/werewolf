@@ -1,7 +1,7 @@
 import random
 from discord.ext import commands
-from cogs.utils.roles import simple
-from cogs.utils.errors import PermissionNotFound, NotGuildChannel
+from application.roles import simple
+from application.errors import PermissionNotFound, NotGuildChannel
 
 
 class GameStatus(commands.Cog):

@@ -1,8 +1,8 @@
 import os
 import traceback
 from discord.ext import commands
-from cogs.utils.game import Game
-from cogs.utils.errors import PermissionNotFound, NotGuildChannel, NotDMChannel
+from application.game import Game
+from application.errors import PermissionNotFound, NotGuildChannel, NotDMChannel
 
 bot = commands.Bot(command_prefix='/')
 bot.game = Game()

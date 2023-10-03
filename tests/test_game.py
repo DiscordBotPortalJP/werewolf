@@ -1,6 +1,6 @@
 import pytest
-from cogs.utils.game import Game
-from cogs.utils.player import Player
+from application.game import Game
+from application.player import Player
 
 player1 = Player(1)
 player2 = Player(2)

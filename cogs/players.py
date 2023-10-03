@@ -1,5 +1,5 @@
 from discord.ext import commands
-from cogs.utils.player import Player
+from application.player import Player
 
 
 class PlayersCog(commands.Cog):

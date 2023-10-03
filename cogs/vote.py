@@ -1,9 +1,9 @@
 import discord
 from discord.ext import commands
-from cogs.utils import errors
-from cogs.utils.game import Game
-from cogs.utils.player import Players
-from cogs.utils.pagenator import Pagenator
+from application import errors
+from application.game import Game
+from application.player import Players
+from application.pagenator import Pagenator
 
 
 class Vote(commands.Cog):

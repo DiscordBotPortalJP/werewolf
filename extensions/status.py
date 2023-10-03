@@ -1,6 +1,7 @@
 import random
+import discord
+from discord import app_commands
 from discord.ext import commands
-from utils.errors import PermissionNotFound, NotGuildChannel
 from constants.roles import simple
 
 
@@ -8,39 +9,30 @@ class GameStatus(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    async def cog_check(self, ctx):
-        if ctx.guild is None:
-            await self.bot.on_command_error(ctx, NotGuildChannel())
-            return False
-
-        if not ctx.author.guild_permissions.administrator:
-            await self.bot.on_command_error(ctx, PermissionNotFound())
-            return False
-
-        return True
-
-    @commands.command()
-    async def create(self, ctx):
-        """ゲームを作成するコマンド"""
-        if self.bot.game.status == 'playing':
-            await ctx.send('ゲーム中です')
-            return
-        if self.bot.game.status == 'waiting':
-            await ctx.send('既に参加者募集中です')
-            return
+    @app_commands.command(name='ゲーム作成', description='新しい人狼ゲームを作成します')
+    @app_commands.guild_only()
+    async def _create_game_app_command(self, interaction: discord.Interaction):
+        match self.bot.game.status:
+            case 'playing':
+                await interaction.response.send_message('既にゲームが進行中です', ephemeral=True)
+                return
+            case 'waiting':
+                await interaction.response.send_message('既に参加者を募集中です', ephemeral=True)
+                return
         self.bot.game.status = 'waiting'
-        self.bot.game.channel = ctx.channel
-        await ctx.send('参加者の募集を開始しました')
+        self.bot.game.channel = interaction.channel
+        await interaction.response.send_message('参加者の募集を開始しました')
 
-    @commands.command()
-    async def start(self, ctx):
-        """ゲームを開始するコマンド"""
-        if self.bot.game is None:
-            await ctx.send('まだ参加者を募集していません')
-            return
-        if self.bot.game.status == 'playing':
-            await ctx.send('既にゲーム中です')
-            return
+    @app_commands.command(name='ゲーム開始', description='人狼ゲームを開始します')
+    @app_commands.guild_only()
+    async def _start_game_app_command(self, interaction: discord.Interaction):
+        match self.bot.game.status:
+            case 'nothing':
+                await interaction.response.send_message('まだ参加者を募集していません', ephemeral=True)
+                return
+            case 'playing':
+                await interaction.response.send_message('既にゲーム中です', ephemeral=True)
+                return
 
         n = len(self.bot.game.players)
         role = simple[n]
@@ -49,34 +41,29 @@ class GameStatus(commands.Cog):
             player = self.bot.game.players[i]
             user = self.bot.get_user(player.id)
             role = role_list[i]
-            await user.send(f'あなたの役職は{role}です')
+            await user.send(f'あなたの役職は {role} です')
             if role == '村':
                 continue
 
             player.set_role(role)
 
-        await ctx.send('役職が配布されました。配布された自分の役職を確認し、準備を完了させてください。')
+        await interaction.response.send_message('役職が配布されました。配布された自分の役職を確認し、準備を完了させてください。')
         self.bot.game.status = 'playing'
-        await ctx.send('ゲームが開始されました。それぞれの役職にあった行動をとってください。')
+        await interaction.response.send_message('ゲームが開始されました。それぞれの役職にあった行動をとってください。')
 
-    @commands.command()
-    async def set_nothing(self, ctx):
-        self.bot.game.status = 'nothing'
-        await ctx.send(f'game.status を {self.bot.game.status} に変更しました')
-
-    @commands.command()
-    async def set_playing(self, ctx):
-        self.bot.game.status = 'playing'
-        await ctx.send(f'game.status を {self.bot.game.status} に変更しました')
-
-    @commands.command()
-    async def set_waiting(self, ctx):
-        self.bot.game.status = 'waiting'
-        await ctx.send(f'game.status を {self.bot.game.status} に変更しました')
-
-    @commands.command()
-    async def game_status(self, ctx):
-        await ctx.send(f'現在の game.status は {self.bot.game.status} です')
+    @app_commands.command(name='ステータス確認', description='現在の人狼ゲームのステータスを確認します')
+    @app_commands.guild_only()
+    async def _show_game_status_app_command(self, interaction: discord.Interaction):
+        match self.bot.game.status:
+            case 'nothing':
+                await interaction.response.send_message('参加者を募集していません', ephemeral=True)
+                return
+            case 'waiting':
+                await interaction.response.send_message('参加者を募集中です', ephemeral=True)
+                return
+            case 'playing':
+                await interaction.response.send_message('人狼ゲームが進行中です', ephemeral=True)
+                return
 
 
 async def setup(bot: commands.Bot) -> None:

@@ -1,6 +1,6 @@
 import discord
+from discord import app_commands
 from discord.ext import commands
-from utils import errors
 from application.game import Game
 from application.player import Players
 from application.pagenator import Pagenator
@@ -10,16 +10,9 @@ class VoteCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    async def cog_check(self, ctx):
-        if not isinstance(ctx.channel, discord.DMChannel):
-            await self.bot.on_command_error(ctx, errors.NotDMChannel())
-            return False
-        return True
-
-    async def change_date(self, ctx):
+    async def change_date(self, interaction: discord.Interaction):
         """日付変更処理"""
         if not self.bot.game.is_set_target():
-            await self.bot.game.channel.send('指定が行われましたが、未指定の方がいます。')
             return
 
         guild = self.bot.game.channel.guild
@@ -60,60 +53,64 @@ class VoteCog(commands.Cog):
 
         self.bot.game.days += 1
 
-    async def select(self, ctx, players: Players, set_method, action: str):
-        d = {self.bot.get_user(p.id).mention: p.id for p in players if p.id != ctx.author.id}
+    async def select(self, interaction: discord.Interaction, players: Players, set_method, action: str):
+        d = {self.bot.get_user(p.id).mention: p.id for p in players if p.id != interaction.user.id}
         target = await Pagenator(
             self.bot,
-            ctx.author,
-            ctx.author,
+            interaction.user,
+            interaction.user,
             list(d.keys()),
             f'{action}対象に指定するユーザーを選びます',
             f'{action}対象に指定するユーザーの番号のリアクションを押してください。\n左右矢印リアクションでページを変更できます。'
         ).start()
         set_method(self.bot.game.players.get(d[target]))
-        await ctx.author.send(f'{action}指定完了しました。')
+        await interaction.response.send_message(f'{action}指定完了しました。', ephemeral=True)
 
-    async def select_vote(self, ctx):
-        set_method = self.bot.game.players.get(ctx.author.id).set_vote
-        await self.select(ctx, self.bot.game.players.alives, set_method, '処刑')
+    async def select_vote(self, interaction: discord.Interaction):
+        set_method = self.bot.game.players.get(interaction.author.id).set_vote
+        await self.select(interaction, self.bot.game.players.alives, set_method, '処刑')
 
-    async def select_raid(self, ctx):
-        set_method = self.bot.game.players.get(ctx.author.id).set_raid
-        await self.select(ctx, self.bot.game.players.alives.werewolfs, set_method, '襲撃')
+    async def select_raid(self, interaction: discord.Interaction):
+        set_method = self.bot.game.players.get(interaction.author.id).set_raid
+        await self.select(interaction, self.bot.game.players.alives.werewolfs, set_method, '襲撃')
 
-    async def select_fortune(self, ctx):
-        set_method = self.bot.game.players.get(ctx.author.id).set_fortune
-        await self.select(ctx, self.bot.game.players.alives, set_method, '占い')
+    async def select_fortune(self, interaction: discord.Interaction):
+        set_method = self.bot.game.players.get(interaction.author.id).set_fortune
+        await self.select(interaction, self.bot.game.players.alives, set_method, '占い')
 
-    @commands.command()
-    async def vote(self, ctx):
-        await self.select_vote(ctx)
-        await self.change_date(ctx)
+    @app_commands.command(name='投票', description='処刑したいプレイヤーに投票します')
+    @app_commands.guild_only()
+    async def _vote_app_command(self, interaction: discord.Interaction):
+        await self.select_vote(interaction)
+        await self.change_date(interaction)
 
-    @commands.command()
-    async def raid(self, ctx):
-        if self.bot.game.players.get(ctx.author.id).role != '狼':
-            await ctx.send('あなたは人狼ではないので、襲撃することはできません。')
+    @app_commands.command(name='襲撃', description='襲撃したいプレイヤーに投票します')
+    @app_commands.guild_only()
+    async def _raid_app_command(self, interaction: discord.Interaction):
+        if self.bot.game.players.get(interaction.user.id).role != '狼':
+            await interaction.response.send_message('あなたは人狼ではないので、襲撃することはできません。', ephemeral=True)
             return
-        await self.select_raid(ctx)
-        await self.change_date(ctx)
+        await self.select_raid(interaction)
+        await self.change_date(interaction)
 
-    @commands.command()
-    async def fortune(self, ctx):
-        if self.bot.game.players.get(ctx.author.id).role != '占':
-            await ctx.send('あなたは占い師ではないので、占うことはできません。')
+    @app_commands.command(name='占い', description='プレイヤーを一人占います')
+    @app_commands.guild_only()
+    async def _fortune_app_command(self, interaction: discord.Interaction):
+        if self.bot.game.players.get(interaction.user.id).role != '占':
+            await interaction.response.send_message('あなたは占い師ではないので、占うことはできません。', ephemeral=True)
             return
-        await self.select_fortune(ctx)
-        await self.change_date(ctx)
+        await self.select_fortune(interaction)
+        await self.change_date(interaction)
 
-    @commands.command()
-    async def werewolfs(self, ctx):
-        if self.bot.game.players.get(ctx.author.id).role != '狼':
-            await ctx.send('あなたは人狼ではありません')
+    @app_commands.command(name='仲間の人狼を表示', description='仲間の人狼を表示します')
+    @app_commands.guild_only()
+    async def _show_werewolfs_app_command(self, interaction: discord.Interaction):
+        if self.bot.game.players.get(interaction.user.id).role != '狼':
+            await interaction.response.send_message('あなたは人狼ではありません', ephemeral=True)
             return
         guild = self.bot.game.channel.guild
         werewolfs = ' '.join(guild.get_member(w.id).display_name for w in self.bot.game.players.alives.werewolfs)
-        await ctx.send(f'この村の人狼は {werewolfs} です。')
+        await interaction.response.send_message(f'この村の人狼は {werewolfs} です。', ephemeral=True)
 
 
 async def setup(bot: commands.Bot) -> None:

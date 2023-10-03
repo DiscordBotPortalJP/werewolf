@@ -1,12 +1,12 @@
 import discord
 from discord.ext import commands
-from cogs.utils import errors
-from cogs.utils.game import Game
-from cogs.utils.player import Players
-from cogs.utils.pagenator import Pagenator
+from utils import errors
+from application.game import Game
+from application.player import Players
+from application.pagenator import Pagenator
 
 
-class Vote(commands.Cog):
+class VoteCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -116,5 +116,5 @@ class Vote(commands.Cog):
         await ctx.send(f'この村の人狼は {werewolfs} です。')
 
 
-def setup(bot):
-    return bot.add_cog(Vote(bot))
+async def setup(bot: commands.Bot) -> None:
+    await bot.add_cog(VoteCog(bot))
